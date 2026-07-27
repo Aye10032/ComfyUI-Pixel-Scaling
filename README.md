@@ -10,12 +10,9 @@ K-Centroid 会把每个目标像素对应的源图区域作为一个 tile，使�
 ## 环境要求
 
 - Python 3.13
-- ComfyUI（提供 PyTorch）
 - NumPy 2.1+
 - Pillow 11+
 
-项目使用 [uv](https://docs.astral.sh/uv/) 管理开发环境，同时提供
-`requirements.txt` 给 ComfyUI 使用。
 
 ## 安装到 ComfyUI
 
@@ -45,19 +42,6 @@ python -m pip install -r requirements.txt
 聚类方式缩小，以保留透明区域的硬边。RGBA 输入仍输出 RGBA，RGB 输入
 仍输出 RGB；没有透明信息时，MASK 输出为全黑。
 
-## 使用 uv 开发
-
-```bash
-uv sync
-```
-
-依赖修改后，重新生成 ComfyUI 使用的依赖文件：
-
-```bash
-uv lock
-uv export --no-dev --no-hashes --no-header --no-emit-project \
-  -o requirements.txt
-```
 
 ## 许可证与致谢
 
