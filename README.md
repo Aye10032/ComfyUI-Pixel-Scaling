@@ -32,20 +32,23 @@ python -m pip install -r requirements.txt
 
 ## 节点参数
 
-- `image`：ComfyUI `IMAGE`，支持批量输入。
+- `image`：ComfyUI `IMAGE`，支持批量输入和内嵌 RGBA。
+- `mask`：可选的 ComfyUI `MASK`。标准 `Load Image` 节点会把 PNG Alpha
+  作为 MASK 输出，可直接连接到这里。
 - `width` / `height`：输出尺寸。K-Centroid 只用于缩小，因此两个值都不能
   超过输入尺寸。
 - `centroids`：每个 tile 的聚类数量，默认为 `2`。数值越大越可能保留细微
   颜色，但计算量也会增加。
 
-输入会按上游算法转换为 RGB，所以透明通道不会保留。输出为标准 ComfyUI
-浮点 RGB `IMAGE`。
+节点输出缩小后的 `IMAGE` 和 `MASK`。RGB 通道按上游算法处理；RGBA
+输入的 Alpha，或单独连接的 MASK，都会使用相同的 K-Centroid tile
+聚类方式缩小，以保留透明区域的硬边。RGBA 输入仍输出 RGBA，RGB 输入
+仍输出 RGB；没有透明信息时，MASK 输出为全黑。
 
 ## 使用 uv 开发
 
 ```bash
 uv sync
-uv run pytest
 ```
 
 依赖修改后，重新生成 ComfyUI 使用的依赖文件：

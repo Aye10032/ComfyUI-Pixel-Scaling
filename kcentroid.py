@@ -45,7 +45,54 @@ def k_centroid_downscale(
     """
 
     _validate_parameters(image, width, height, centroids)
-    image = image.convert("RGB")
+    has_alpha = "A" in image.getbands() or "transparency" in image.info
+    alpha = image.convert("RGBA").getchannel("A") if has_alpha else None
+
+    downscaled = _k_centroid_rgb(
+        image.convert("RGB"),
+        width=width,
+        height=height,
+        centroids=centroids,
+    )
+
+    if alpha is not None:
+        downscaled_alpha = k_centroid_downscale_channel(
+            alpha,
+            width=width,
+            height=height,
+            centroids=centroids,
+        )
+        downscaled.putalpha(downscaled_alpha)
+
+    return downscaled
+
+
+def k_centroid_downscale_channel(
+    channel: Image.Image,
+    width: int,
+    height: int,
+    centroids: int = 2,
+) -> Image.Image:
+    """Downscale a single channel and return an ``L`` mode image."""
+
+    channel = channel.convert("L")
+    _validate_parameters(channel, width, height, centroids)
+    channel_rgb = Image.merge("RGB", (channel, channel, channel))
+    return _k_centroid_rgb(
+        channel_rgb,
+        width=width,
+        height=height,
+        centroids=centroids,
+    ).getchannel("R")
+
+
+def _k_centroid_rgb(
+    image: Image.Image,
+    width: int,
+    height: int,
+    centroids: int,
+) -> Image.Image:
+    """Apply the upstream K-Centroid algorithm to an RGB image."""
 
     downscaled = np.empty((height, width, 3), dtype=np.uint8)
     width_factor = image.width / width
