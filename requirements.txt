@@ -1,0 +1,4 @@
+numpy==2.5.1
+    # via comfyui-pixel-scaling
+pillow==12.3.0
+    # via comfyui-pixel-scaling
